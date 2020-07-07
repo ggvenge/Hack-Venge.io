@@ -1,180 +1,200 @@
 // ==UserScript==
-// @name         Venge.io AIMBOT/ESP/TELEPORT hacks WORKING 1.0.26
-// @version      0.71
-// @description  Venge.io AIMBOT/ESP/TELEPORT
-// @author       MetaRobot
-// @match        https://venge.io/*
-// @grant       GM_xmlhttpRequest
-// @grant       unsafeWindow
-// @run-at      document-start
-// @namespace https://greasyfork.org/users/663589
+// @name         HACKS Venge.io UPDATED 1.0.27 UNLIMTIED AMMO INF JUMP INSTANT MELEE AUTO KILL TELEPORT AIMBOT ESP
+// @version      1.0
+// @description  Venge.io HACKS
+// @author       wernser412
+// @match        https://venge.io/
+// @grant        none
+// @run-at       document-start
+// @namespace    wernser412
 // ==/UserScript==
 
+var Hack = function() {
+	this.settings = {
+		infAmmo: false,
+		infJump: false,
+		autoKill: false,
+		speedMlt: 0,
+        esp: true,
+        aimbot: false,
+	};
+	this.hooks = {
+		network: null,
+		movement: null,
+		anticheat: null
+	};
 
-// oh noes, bye bye game
-unsafeWindow.document.documentElement.innerHTML = ``;
+	this.setupHooks = function() {
+		this.waitForProp("Movement").then(this.hookMovement).catch(e => console.log(e));
+		this.waitForProp("NetworkManager").then(this.hookNetwork).catch(e => console.log(e));
+		this.waitForProp("VengeGuard").then(this.hookAnticheat).catch(e => console.log(e));
+		this.waitForProp("Label").then(this.hookLabel).catch(e => console.log(e));
+	};
 
-function processSource(gameSource){
+	this.setupBinds = function() {
+		window.addEventListener("keydown", (e) => {
+            switch(e.keyCode) {
+                case 190: // PERIOD
+                    this.settings.autoKill = !this.settings.autoKill;
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Kill on Respawn - " + (this.settings.autoKill?"Enabled":"Disabled"), !0)
+                    break;
+                case 188: // COMMA
+                    this.settings.infAmmo = !this.settings.infAmmo;
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Infinite Ammo - " + (this.settings.infAmmo?"Enabled":"Disabled"), !0)
+                    break;
+                case 186: // SEMI COL
+                    this.settings.aimbot = !this.settings.aimbot;
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Aimbot - " + (this.settings.aimbot?"Enabled":"Disabled"), !0)
+                    break;
+                case 222: // QUOTE
+                    this.settings.infJump = !this.settings.infJump;
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Infinite Jump - " + (this.settings.infJump?"Enabled":"Disabled"), !0)
+                    break;
+                case 191: // SLASH
+                    this.settings.speedMlt++;
+                    if (this.settings.speedMlt > 4) this.settings.speedMlt = 0;
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Speed Multiplier - " + (this.settings.speedMlt + 1) + "x", !0)
+                    break;
+                case 219: // [
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Teleporting you to Safety", !0);
+                    this.hooks.movement.app.fire("Player:Respawn", !0);
+                    break;
+                case 221: // ]
+                    this.settings.esp = !this.settings.esp;
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "ESP - " + (this.settings.esp?"Enabled":"Disabled"), !0)
+                    break;
+                default: return;
+            }
+		});
+	};
 
-   // Remove pathetic attempt at anticheat, lol
-   let newSource = gameSource;
-   newSource = newSource.replace(/VengeGuard\.prototype\.onCheck=function\(\){[\s\S]+?(?=})/, `VengeGuard.prototype.onCheck = function() { /* more like vengetard LOL */ this.app.fire("Network:Guard",true);`);
-   newSource = newSource.replace(`["guard",e]`, `["guard",true]`); //awww this one was kinda cute hope nobody's getting paid for this
+	this.waitForProp = async function(val) {
+		while(!window.hasOwnProperty(val))
+			await new Promise(resolve => setTimeout(resolve, 1000));
+	};
 
-   // ESP (im even leaving comments!! good luck guys)
-   newSource = newSource.replace(`Date.now()-this.player.lastDamage>1800`, `Date.now()-this.player.lastDamage>1800&&!window.VengeTard.esp`);
+	this.hookMovement = function() {
+		const update = Movement.prototype.update;
+        var defaultSpeeds = [];
+		Movement.prototype.update = function (t) {
+			if (!FakeGuard.hooks.movement) {
+				FakeGuard.hooks.movement = this;
+                defaultSpeeds = [this.defaultSpeed, this.strafingSpeed];
+			}
+			FakeGuard.onTick();
+			update.apply(this, [t]);
+			if (FakeGuard.settings.infAmmo) {
+                this.setAmmoFull();
+				this.isHitting = false;
+			}
+			if (FakeGuard.settings.infJump) {
+				this.isLanded = true;
+				this.bounceJumpTime = 0;
+				this.isJumping = false;
+			}
+			
+            this.defaultSpeed = defaultSpeeds[0] * (FakeGuard.settings.speedMlt + 1);
+            this.strafingSpeed = defaultSpeeds[1] * (FakeGuard.settings.speedMlt + 1);
+		};
+		console.log("Movement Hooked");
+	};
 
-   return newSource;
-}
+	this.hookNetwork = function() {
+		var manager = NetworkManager.prototype.initialize;
+		NetworkManager.prototype.initialize = function() {
+			if (!FakeGuard.hooks.network) {
+			   FakeGuard.hooks.network = this;
+			}
+			manager.call(this);
+		};
 
+		var ogRespawn = NetworkManager.prototype.respawn;
+		NetworkManager.prototype.respawn = function(e) {
+			ogRespawn.apply(this, [e]);
+			if (e && e.length > 0 && FakeGuard.settings.autoKill) {
+				var t = e[0], i = this.getPlayerById(t);
+				if (i&& t!=this.playerid) {
+                    var scope = this;
+                    setTimeout(function() {
+                        scope.send(["da", t, 100, 1, i.position.x, i.position.y, i.position.z])
+                    }, 3500);
+				}
+			}
+		}
+		console.log("Network Hooked");
+	};
 
-function processEngine(engineSource){ // Not needed, yet...
-     let newSource = engineSource;
-     return newSource;
-}
+	this.hookAnticheat = function() {
+		VengeGuard.prototype.onCheck = function() {
+			this.app.fire("Network:Guard", 1)
+		}
+		console.log("Anticheat Hooked");
+	};
+	
+	this.hookLabel = function() {
+		Label.prototype.update = function(t) {
+			if (this.player.isDeath)
+				return this.labelEntity.enabled = !1,
+				!1;
+			if (Date.now() - this.player.lastDamage > 1800 && !FakeGuard.settings.esp)
+				return this.labelEntity.enabled = !1,
+				!1;
+			var i = new pc.Vec3
+			  , e = this.app.systems.camera.cameras[0]
+			  , a = this.app.graphicsDevice.maxPixelRatio
+			  , s = this.screenEntity.screen.scale
+			  , l = this.app.graphicsDevice;
+			e.worldToScreen(this.headPoint.getPosition(), i),
+			i.x *= a,
+			i.y *= a,
+			i.x > 0 && i.x < this.app.graphicsDevice.width && i.y > 0 && i.y < this.app.graphicsDevice.height && i.z > 0 ? (this.labelEntity.setLocalPosition(i.x / s, (l.height - i.y) / s, 0),
+			this.labelEntity.enabled = !0) : this.labelEntity.enabled = !1
+		};
+		console.log("Label Hooked");
+	};
 
+	this.onTick = function() {
+        if (FakeGuard.settings.aimbot) {
+			var closest;
+			var rec;
 
-let getD3D = function(a, b, c, d, e, f) { // but muh pLaYeRcaNvAs.UtIlS
-        let g = a - d, h = b - e, i = c - f;
-        return Math.sqrt(g * g + h * h + i * i);
-    };
-let getXDire = function(a, b, c, d, e, f) {
-    let g = Math.abs(b - e), h = getD3D(a, b, c, d, e, f);
-    return Math.asin(g / h) * (b > e ? -1 : 1);
+			var players = FakeGuard.hooks.network.players;
+			for (var i = 0; i < players.length; i++) {
+				var target = players[i];
+				var t = FakeGuard.hooks.movement.entity.getPosition();
+				let calcDist = Math.sqrt( (target.position.y-t.y)**2 + (target.position.x-t.x)**2 + (target.position.z-t.z)**2 );
+				if (calcDist < rec || !rec) {
+					closest = target;
+					rec = calcDist;
+				}
+			}
+			
+			FakeGuard.closestp = closest;
+			let rayCastList = pc.app.systems.rigidbody.raycastAll(FakeGuard.hooks.movement.entity.getPosition(), FakeGuard.closestp.getPosition()).map(x=>x.entity.tags._list.toString())
+			let rayCastCheck = rayCastList.length === 1 && rayCastList[0] === "Player";
+			if (closest && rayCastCheck) {
+				t = FakeGuard.hooks.movement.entity.getPosition()
+					, e = Utils.lookAt(closest.position.x, closest.position.z, t.x, t.z);
+				FakeGuard.hooks.movement.lookX = e * 57.29577951308232 + Math.random()/10 - Math.random()/10;
+				FakeGuard.hooks.movement.lookY = -1 * (this.getXDire(closest.position.x, closest.position.y, closest.position.z, t.x, t.y+0.9, t.z)) * 57.29577951308232;
+				FakeGuard.hooks.movement.leftMouse = true;
+				FakeGuard.hooks.movement.setShooting(FakeGuard.hooks.movement.lastDelta);
+			} else {
+			   FakeGuard.hooks.movement.leftMouse = false;
+			}
+		}
+	};
+	
+	this.getD3D = function(a, b, c, d, e, f) {
+		let g = a - d, h = b - e, i = c - f;
+		return Math.sqrt(g * g + h * h + i * i);
+	};
+	this.getXDire = function(a, b, c, d, e, f) {
+		let g = Math.abs(b - e), h = this.getD3D(a, b, c, d, e, f);
+		return Math.asin(g / h) * (b > e ? -1 : 1);
+	};
+
+	this.setupHooks();
+	this.setupBinds();
 };
-
-// wow this kinda sucks for you doesnt it
-// maybe add a check for.. hmm yikes
-// maybe dont use shitty game maker software???
-GM_xmlhttpRequest({
-    method: "GET",
-    url: `https://venge.io/playcanvas-stable.min.js`, // Fucking idiots
-    onload: jsresp => {
-        let code = jsresp.responseText;
-
-        GM_xmlhttpRequest({
-            method: "GET" ,
-            url: document.location.origin,
-            onload: inRes => {
-                let dbody = inRes.responseText;
-                let newBody = dbody;
-
-                let newCode = processEngine(code);
-
-                newBody = newBody.replace(/<script src="playcanvas-stable\.min\.js"><\/script>/, `<script>${newCode}</script>`)
-
-                document.open();
-                unsafeWindow.document.write(newBody);
-                document.close();
-
-                document.oldCreateElement = document.createElement;
-                unsafeWindow.loadCallback = false;
-                document.createElement = function(args){
-                    let retVal = this.oldCreateElement(...arguments);
-                    retVal.__defineSetter__("src", function(src){
-                        if (src.includes("__game-scripts.js")){ // uh oh might wanna patch this!
-                            unsafeWindow.loadCallback = retVal.onload;
-                            fetch(`${document.baseURI}${src}`).then(res=>res.text()).then(gameSource => {
-                                let procSource = processSource(gameSource);
-                                unsafeWindow.eval(procSource); // hmmmm, and this
-                                unsafeWindow.loadCallback();
-                            });
-                        } else {
-                            retVal.setAttribute("src", src); // :(
-                        }
-                    });
-                    return retVal;
-                }
-
-                // Ohh nowowoo im so scawed is venge modeator #0492 going to ban me from teh discowddd!! owowoo
-                unsafeWindow.VengeTard = {kill: true, esp: true};
-                unsafeWindow.VengeTard.tick = function() {
-                    if (unsafeWindow.VengeTard.kill) {
-                        var closest;
-                        var rec;
-
-                        var players = unsafeWindow.VengeTard.network.players;
-                        for (var i = 0; i < players.length; i++) {
-                            var target = players[i];
-                            var t = unsafeWindow.VengeTard.movement.entity.getPosition();
-                            let calcDist = Math.sqrt( (target.position.y-t.y)**2 + (target.position.x-t.x)**2 + (target.position.z-t.z)**2 );
-                            if (calcDist < rec || !rec) {
-                                closest = target;
-                                rec = calcDist;
-                            }
-                        }
-
-                        // if (window.closestp) hack(); "iMpRoved ANTiChEat"
-                        unsafeWindow.closestp = closest;
-                        let rayCastList = pc.app.systems.rigidbody.raycastAll(unsafeWindow.VengeTard.movement.entity.getPosition(), closestp.getPosition()).map(x=>x.entity.tags._list.toString())
-                        let rayCastCheck = rayCastList.length === 1 && rayCastList[0] === "Player";
-                        if (closest && rayCastCheck) {
-                            t = unsafeWindow.VengeTard.movement.entity.getPosition()
-                                , e = Utils.lookAt(closest.position.x, closest.position.z, t.x, t.z);
-
-                            // Oh fuck oh shit they found Math.random we're fucked
-                            unsafeWindow.VengeTard.movement.lookX = e * 57.29577951308232 + Math.random()/10 - Math.random()/10;
-                            unsafeWindow.VengeTard.movement.lookY = -1 * (getXDire(closest.position.x, closest.position.y, closest.position.z, t.x, t.y+0.9, t.z)) * 57.29577951308232;
-                            unsafeWindow.VengeTard.movement.leftMouse = true;
-                            unsafeWindow.VengeTard.movement.setShooting(unsafeWindow.VengeTard.movement.lastDelta);
-                        } else {
-                           unsafeWindow.VengeTard.movement.leftMouse = false;
-                        }
-                    }
-                };
-
-                (async() => {
-                    while(!unsafeWindow.hasOwnProperty("Movement"))
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    var updateHooked = false;
-                    const update = Movement.prototype.update;
-                    Movement.prototype.update = function (t) {
-                        if (!updateHooked) {
-                            unsafeWindow.VengeTard.movement = this;
-                            updateHooked = true;
-                        }
-                        unsafeWindow.VengeTard.tick();
-                        update.apply(this, [t]);
-
-                    };
-                })();
-
-                (async() => {
-                    while(!unsafeWindow.hasOwnProperty("NetworkManager"))
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    var initializeHooked = false;
-                    var manager = NetworkManager.prototype.initialize;
-                    NetworkManager.prototype.initialize = function() {
-                        if (!initializeHooked) {
-                            unsafeWindow.VengeTard.network = this;
-                            console.log(this)
-                            initializeHooked = true;
-                        }
-                        manager.call(this);
-                        unsafeWindow.VengeTard.network.app.fire("Chat:Message", "Hacks", "Welcome to VengeBOT Pro! SLASH = toggle aimbot, r = teleport to safety, t = ESP", !0);
-                    };
-                   })();
-
-                // Add a check for window.VengeTard u wont
-                unsafeWindow.addEventListener("keydown", function(e) {
-						 if (e.keyCode == 191) { // SLASH
-								 unsafeWindow.VengeTard.kill = !unsafeWindow.VengeTard.kill;
-								 unsafeWindow.VengeTard.network.app.fire("Chat:Message", "Hacks", "Aimbot - " + (unsafeWindow.VengeTard.kill?"Enabled":"Disabled"), !0)
-						 }
-
-                         else if (e.keyCode == 82){ // R
-                                  unsafeWindow.VengeTard.network.app.fire("Chat:Message", "Hacks", "You pressed R - Teleporting you to Safety", !0);
-                                  unsafeWindow.VengeTard.movement.app.fire("Player:Respawn", !0);
-                          }
-
-                        else if (e.keyCode == 84){ // T
-                             unsafeWindow.VengeTard.esp = !unsafeWindow.VengeTard.esp;
-                             unsafeWindow.VengeTard.network.app.fire("Chat:Message", "Hacks", "ESP - " + (unsafeWindow.VengeTard.esp?"Enabled":"Disabled"), !0)
-
-                        }
-				 })
-
-               }
-        });
-}});
+FakeGuard = new(Hack)();
