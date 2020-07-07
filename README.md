@@ -17,3 +17,5 @@ Para la version 1.0.26
 7.- Alternar ESP (mirar enemigos)= ¿
 
 ¡Activado esta el ESP!
+
+![Screenshot](teclado.jpg?raw=true )</p>
