@@ -10,10 +10,10 @@ Para la version 1.0.26
 
 4.- / = Aumenta tu Velocidad
 
-5.- ; = Alternar Aimbot
+5.- ; = Alternar Aimbot (Disparo automatico al enemigo)
 
 6.- [= Te teletransporta lejos
 
 7.- ] = Alternar ESP (mirar enemigos)
 
-¡Activado esta el ESP y Aimbot!
+¡Activado esta el ESP!
