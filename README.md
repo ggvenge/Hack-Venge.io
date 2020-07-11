@@ -1,6 +1,6 @@
-# Hack Venge.io 06/07/2020
+# Hack Venge.io 11/07/2020
 
-Para la version 1.0.26
+Para la version 1.0.27
 
 1.- Activar / Desactivar muerte instantanea al enemigo = .
 
