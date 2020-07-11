@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         HACKS Venge.io UPDATED 1.0.27 UNLIMTIED AMMO INF JUMP INSTANT MELEE AUTO KILL TELEPORT AIMBOT ESP
+// @name         Venge.io AIMBOTT ESP
 // @version      2.0
 // @description  Venge.io HACKS
 // @author       wernser412
