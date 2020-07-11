@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Venge.io AIMBOTT ESP
+// @name         Venge.io AIMBOT
 // @version      2.0
 // @description  Venge.io HACKS
 // @author       wernser412
