@@ -10,7 +10,7 @@ Para la version 1.0.27
 
 4.- Aumenta tu Velocidad (1 al 7)= }
 
-5.- Alternar Aimbot (Disparo automatico al enemigo) = ´
+5.- Alternar Aimbot (Disparo automatico al enemigo) = ´   --> no funciona
 
 6.- Te teletransporta lejos = '
 
