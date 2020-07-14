@@ -17,6 +17,7 @@ var Hack = function() {
 		speedMlt: 0,
         esp: true,
         aimbot: false,
+        timeScale: 0
 	};
 	this.hooks = {
 		network: null,
@@ -63,6 +64,12 @@ var Hack = function() {
                     this.settings.esp = !this.settings.esp;
                     this.hooks.network.app.fire("Chat:Message", "Hacks", "ESP - " + (this.settings.esp?"Enabled":"Disabled"), !0)
                     break;
+                case 220: // \
+                    this.settings.timeScale++;
+                    if (this.settings.timeScale > 4) this.settings.timeScale = 0;
+                    pc.app.timeScale = (this.settings.timeScale + 1);
+                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Timescale - " + (this.settings.timeScale + 1) + "x", !0)
+                    break;
                 default: return;
             }
 		});
@@ -92,7 +99,7 @@ var Hack = function() {
 				this.bounceJumpTime = 0;
 				this.isJumping = false;
 			}
-			
+
             this.defaultSpeed = defaultSpeeds[0] * (FakeGuard.settings.speedMlt + 1);
             this.strafingSpeed = defaultSpeeds[1] * (FakeGuard.settings.speedMlt + 1);
 		};
@@ -130,26 +137,28 @@ var Hack = function() {
 		}
 		console.log("Anticheat Hooked");
 	};
-	
+
 	this.hookLabel = function() {
-		Label.prototype.update = function(t) {
-			if (this.player.isDeath)
-				return this.labelEntity.enabled = !1,
-				!1;
-			if (Date.now() - this.player.lastDamage > 1800 && !FakeGuard.settings.esp)
-				return this.labelEntity.enabled = !1,
-				!1;
-			var i = new pc.Vec3
-			  , e = this.app.systems.camera.cameras[0]
-			  , a = this.app.graphicsDevice.maxPixelRatio
-			  , s = this.screenEntity.screen.scale
-			  , l = this.app.graphicsDevice;
-			e.worldToScreen(this.headPoint.getPosition(), i),
-			i.x *= a,
-			i.y *= a,
-			i.x > 0 && i.x < this.app.graphicsDevice.width && i.y > 0 && i.y < this.app.graphicsDevice.height && i.z > 0 ? (this.labelEntity.setLocalPosition(i.x / s, (l.height - i.y) / s, 0),
-			this.labelEntity.enabled = !0) : this.labelEntity.enabled = !1
-		};
+        Label.prototype.update = function(t) {
+            if (!pc.isSpectator) {
+                if (this.player.isDeath)
+                    return this.labelEntity.enabled = !1,
+                        !1;
+                if (Date.now() - this.player.lastDamage > 1800 && !FakeGuard.settings.esp)
+                    return this.labelEntity.enabled = !1,
+                        !1
+            }
+            var e = new pc.Vec3
+            , i = this.currentCamera
+            , a = this.app.graphicsDevice.maxPixelRatio
+            , s = this.screenEntity.screen.scale
+            , n = this.app.graphicsDevice;
+            i.worldToScreen(this.headPoint.getPosition(), e),
+                e.x *= a,
+                e.y *= a,
+                e.x > 0 && e.x < this.app.graphicsDevice.width && e.y > 0 && e.y < this.app.graphicsDevice.height && e.z > 0 ? (this.labelEntity.setLocalPosition(e.x / s, (n.height - e.y) / s, 0),
+                                                                                                                                this.labelEntity.enabled = !0) : this.labelEntity.enabled = !1
+        }
 		console.log("Label Hooked");
 	};
 
@@ -168,7 +177,7 @@ var Hack = function() {
 					rec = calcDist;
 				}
 			}
-			
+
 			FakeGuard.closestp = closest;
 			let rayCastList = pc.app.systems.rigidbody.raycastAll(FakeGuard.hooks.movement.entity.getPosition(), FakeGuard.closestp.getPosition()).map(x=>x.entity.tags._list.toString())
 			let rayCastCheck = rayCastList.length === 1 && rayCastList[0] === "Player";
@@ -184,7 +193,7 @@ var Hack = function() {
 			}
 		}
 	};
-	
+
 	this.getD3D = function(a, b, c, d, e, f) {
 		let g = a - d, h = b - e, i = c - f;
 		return Math.sqrt(g * g + h * h + i * i);
