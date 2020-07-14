@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Venge.io AIMBOT
-// @version      2.0
+// @version      3.0
 // @description  Venge.io HACKS
 // @author       wernser412
 // @match        https://venge.io/
