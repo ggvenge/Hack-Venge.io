@@ -1,21 +1,16 @@
-# Hack Venge.io (14/07/2020)
+# Hack Venge.io (19/07/2020)
 
-Para la version 1.0.27
+Para la version 1.0.28
 
-1.- Activar / Desactivar muerte instantanea al enemigo = .
+Wallhacks= "1"
 
-2.- Activar Munición Infinita (Balas infinitas) = ,
+Infinite Ammo= "2"
 
-3.- Activar Salto Infinito = {
+Infinite Jump= "3"
 
-4.- Aumenta tu Velocidad (1 al 7)= }
+Speed Hacks= "4"
 
-5.- Alternar Aimbot (Disparo automatico al enemigo) = ´   --> no funciona
+Teleport to Safety= "q"
 
-6.- Te teletransporta lejos = '
-
-7.- Alternar ESP (mirar enemigos)= ¿
-
-¡Activado esta el ESP!
-
-![Screenshot](teclado.jpg?raw=true )</p>
+------------------------------------------------------------------------------
+Note: Wallhacks and Infinite Ammo will be enabled automatically.
