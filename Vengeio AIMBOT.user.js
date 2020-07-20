@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Venge.io AIMBOT
-// @version      3.0
+// @version      4.0
 // @description  Venge.io HACKS
 // @author       wernser412
 // @match        https://venge.io/
@@ -9,15 +9,16 @@
 // @namespace    wernser412
 // ==/UserScript==
 
+document.title = "Venge.io (Hacked)";
+alert("Thanks for Downloading the Hack, press OK to Load the Game")
+
 var Hack = function() {
 	this.settings = {
-		infAmmo: false,
+		infAmmo: true,
 		infJump: false,
 		autoKill: false,
 		speedMlt: 0,
         esp: true,
-        aimbot: false,
-        timeScale: 0
 	};
 	this.hooks = {
 		network: null,
@@ -35,40 +36,26 @@ var Hack = function() {
 	this.setupBinds = function() {
 		window.addEventListener("keydown", (e) => {
             switch(e.keyCode) {
-                case 190: // PERIOD
-                    this.settings.autoKill = !this.settings.autoKill;
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Kill on Respawn - " + (this.settings.autoKill?"Enabled":"Disabled"), !0)
-                    break;
-                case 188: // COMMA
+                case 98:
                     this.settings.infAmmo = !this.settings.infAmmo;
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Infinite Ammo - " + (this.settings.infAmmo?"Enabled":"Disabled"), !0)
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Infinite Ammo - " + (this.settings.infAmmo?"Enabled":"Disabled"), !0)
                     break;
-                case 186: // SEMI COL
-                    this.settings.aimbot = !this.settings.aimbot;
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Aimbot - " + (this.settings.aimbot?"Enabled":"Disabled"), !0)
-                    break;
-                case 222: // QUOTE
+                case 99:
                     this.settings.infJump = !this.settings.infJump;
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Infinite Jump - " + (this.settings.infJump?"Enabled":"Disabled"), !0)
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Infinite Jump - " + (this.settings.infJump?"Enabled":"Disabled"), !0)
                     break;
-                case 191: // SLASH
+                case 100:
                     this.settings.speedMlt++;
                     if (this.settings.speedMlt > 4) this.settings.speedMlt = 0;
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Speed Multiplier - " + (this.settings.speedMlt + 1) + "x", !0)
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Speed Multiplier - " + (this.settings.speedMlt + 1) + "x", !0)
                     break;
-                case 219: // [
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Teleporting you to Safety", !0);
-                    this.hooks.movement.app.fire("Player:Respawn", !0);
-                    break;
-                case 221: // ]
+                case 97:
                     this.settings.esp = !this.settings.esp;
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "ESP - " + (this.settings.esp?"Enabled":"Disabled"), !0)
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Wallhacks - " + (this.settings.esp?"Enabled":"Disabled"), !0)
                     break;
-                case 220: // \
-                    this.settings.timeScale++;
-                    if (this.settings.timeScale > 4) this.settings.timeScale = 0;
-                    pc.app.timeScale = (this.settings.timeScale + 1);
-                    this.hooks.network.app.fire("Chat:Message", "Hacks", "Timescale - " + (this.settings.timeScale + 1) + "x", !0)
+                case 81:
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Teleporting you to Safety", !0);
+                    this.hooks.movement.app.fire("Player:Respawn", !0);
                     break;
                 default: return;
             }
