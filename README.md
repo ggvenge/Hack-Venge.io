@@ -1,6 +1,6 @@
-# Hack Venge.io (19/07/2020)
+# Hack Venge.io (21/07/2020)
 
-Para la version 1.0.28
+Para la version 1.0.29
 
 Wallhacks= "1"
 
