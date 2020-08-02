@@ -8,7 +8,6 @@
 // @run-at       document-start
 // @namespace    wernser412
 // ==/UserScript==
-
 document.title = "Venge.io (Hacked)";
 alert("Thanks for Downloading the Hack, press OK to Load the Game")
 
