@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Venge.io AIMBOT
 // @version      4.0
-// @description  Venge.io AIMBOT
+// @description  Venge AIMBOT
 // @author       wernser412
 // @match        https://venge.io/
 // @grant        none
