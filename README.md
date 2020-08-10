@@ -19,4 +19,4 @@ No Abillity Cooldown = "7"
 Teleport to Safety= "q"
 
 ------------------------------------------------------------------------------
-Note: Wallhacks and Infinite Ammo will be enabled automatically.
+Note: Wallhacks (ESP), Infinite Ammo, No Abillity Colldown and No Weapon Spread will be enabled automatically.
