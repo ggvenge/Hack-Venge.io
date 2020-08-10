@@ -1,4 +1,4 @@
-# Hack Venge.io (02/08/2020)
+# Hack Venge.io (10/08/2020)
 
 Para la version 1.0.30
 
@@ -9,6 +9,12 @@ Infinite Ammo= "2"
 Infinite Jump= "3"
 
 Speed Hacks= "4"
+
+Unlimited FireRate = "5"
+
+No Bullet Spread = "6"
+
+No Abillity Cooldown = "7"
 
 Teleport to Safety= "q"
 
