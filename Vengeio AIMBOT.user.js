@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Venge.io AIMBOT
-// @version      4.0
+// @version      5.0
 // @description  Venge AIMBOT
 // @author       wernser412
 // @match        https://venge.io/
@@ -10,15 +10,16 @@
 // ==/UserScript==
 
 document.title = "Venge.io (Hacked)";
-alert("Thanks for Downloading the Hack, press OK to Load the Game")
 
 var Hack = function() {
 	this.settings = {
 		infAmmo: true,
+        noSpread: true,
+        noAbcool: true,
 		infJump: false,
-		autoKill: false,
 		speedMlt: 0,
         esp: true,
+        fireRate: false,
 	};
 	this.hooks = {
 		network: null,
@@ -57,6 +58,18 @@ var Hack = function() {
                     this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Teleporting you to Safety", !0);
                     this.hooks.movement.app.fire("Player:Respawn", !0);
                     break;
+                case 102:
+                    this.settings.noSpread = !this.settings.noSpread;
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "No Spread - " + (this.settings.noRecoil?"Enabled":"Disabled"), !0)
+                    break;
+                case 101:
+                    this.settings.fireRate = !this.settings.fireRate;
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "Fire Rate - " + (this.settings.fireRate?"Enabled":"Disabled"), !0)
+                    break;
+                case 103:
+                    this.settings.noAbcool = !this.settings.noAbcool;
+                    this.hooks.network.app.fire("Chat:Message", "IDK.exe", "0 Abillity Cooldown - " + (this.settings.noAbcool?"Enabled":"Disabled"), !0)
+                    break;
                 default: return;
             }
 		});
@@ -86,7 +99,16 @@ var Hack = function() {
 				this.bounceJumpTime = 0;
 				this.isJumping = false;
 			}
-
+            if (FakeGuard.settings.noSpread) {
+                this.currentWeapon.spread = 0;
+            }
+            if (FakeGuard.settings.fireRate) {
+                this.isShooting = false;
+            }
+            if (FakeGuard.settings.noAbcool) {
+                this.player.throwCooldown = 0;
+                this.lastThrowDate = 0;
+            }
             this.defaultSpeed = defaultSpeeds[0] * (FakeGuard.settings.speedMlt + 1);
             this.strafingSpeed = defaultSpeeds[1] * (FakeGuard.settings.speedMlt + 1);
 		};
