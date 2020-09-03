@@ -1,4 +1,4 @@
-# Hack Venge.io (27/08/2020)
+# Hack Venge.io (03/09/2020)
 
 Para la version 1.0.37
 
